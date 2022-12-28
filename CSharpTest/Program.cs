@@ -18,6 +18,7 @@ namespace CSharpTest_Console_2048
 
             Restart(ref m);
 
+            //test
             /*for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
                     m[i, j] = Convert.ToInt32(Math.Pow(2, j + (i * n)));
@@ -27,22 +28,19 @@ namespace CSharpTest_Console_2048
 
             Console.Title = "2048";
             Console.WindowWidth = 3 * 2 + 9 * n;
-            Console.WindowHeight = 4 + 1 + 3 * n;
+            Console.WindowHeight = 3 + 1 + 3 * n;
 
             Console.BackgroundColor = ConsoleColor.Black;
-
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("   2048");
-            Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("   Текущий счёт:");
+            Console.SetCursorPosition(3, 1);
+            Console.WriteLine("Текущий счёт:");
             
             while (true)
             {
-                Print(ref m, 3, 4);
+                Print(ref m, 3, 3);
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.SetCursorPosition(20 + 9 * (n - 3), 2);
+                Console.SetCursorPosition(20 + 9 * (n - 3), 1);
                 Console.Write($"{score,10}");
 
                 Console.ForegroundColor = ConsoleColor.Black;
@@ -110,9 +108,15 @@ namespace CSharpTest_Console_2048
                         Console.Write("         ");
                     }
                     Console.SetCursorPosition(left + j * 9, top + i * 3 + 1);
-                    Console.Write($"{m[i, j],6}");
+                    if (m[i, j] < 10)
+                        Console.Write($"{m[i, j],5}");
+                    else if (m[i, j] < 100)
+                        Console.Write($"{m[i, j],5}");
+                    else if (m[i, j] < 1000)
+                        Console.Write($"{m[i, j],6}");
+                    else
+                        Console.Write($"{m[i, j],6}");
                 }
-                //Console.WriteLine();
             }
         }
 
@@ -134,11 +138,11 @@ namespace CSharpTest_Console_2048
                     break;
                 case 8:
                     Console.BackgroundColor = ConsoleColor.DarkCyan;
-                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case 16:
                     Console.BackgroundColor = ConsoleColor.Blue;
-                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case 32:
                     Console.BackgroundColor = ConsoleColor.DarkBlue;
@@ -153,19 +157,19 @@ namespace CSharpTest_Console_2048
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case 256:
-                    Console.BackgroundColor = ConsoleColor.DarkYellow;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    break;
-                case 512:
-                    Console.BackgroundColor = ConsoleColor.Yellow;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    break;
-                case 1024:
                     Console.BackgroundColor = ConsoleColor.Red;
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
-                case 2048:
+                case 512:
                     Console.BackgroundColor = ConsoleColor.DarkRed;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case 1024:
+                    Console.BackgroundColor = ConsoleColor.Magenta;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case 2048:
+                    Console.BackgroundColor = ConsoleColor.DarkMagenta;
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 default:
