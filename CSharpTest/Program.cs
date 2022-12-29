@@ -4,19 +4,46 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharpTest_Console_2048
+namespace CSharp_Console2048
 {
     internal class Program
     {
-        static int n = 4;
-        static Random rnd = new Random();
-        static int score = 0;
+        private static int n = 4; // n * n  -  размер игрового поля
+        private static Random rnd = new Random();
+        private static int score = 0;
 
         static void Main(string[] args)
         {
-            int[,] m = new int[n, n];
+            if (args.Length == 1) // первый аргумент - размер поля
+            {
+                // TODO
+                n = int.Parse(args[0]);
+            }
+            else if (args.Length > 1)
+            {
+                // TODO
+            }
 
-            Restart(ref m);
+            var defaultWidth = Console.WindowWidth;
+            var defaultHeight = Console.WindowHeight;
+
+            Console.WindowWidth = 3 * 2 + 9 * n;
+            Console.WindowHeight = 3 + 1 + 3 * n;
+            Console.Title = "2048";
+            Console.CursorVisible = false;
+
+            var defaultBackgroundColor = Console.BackgroundColor;
+            var defaultForegroundColor = Console.ForegroundColor;
+
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Clear();
+
+            Console.SetCursorPosition(3, 1);
+            Console.WriteLine("Текущий счёт:");
+
+            int[,] m = new int[n, n];
+            Restart(m);
 
             //test
             /*for (int i = 0; i < n; i++)
@@ -24,20 +51,9 @@ namespace CSharpTest_Console_2048
                     m[i, j] = Convert.ToInt32(Math.Pow(2, j + (i * n)));
             m[0, 0] = 0;*/
 
-            Console.CursorVisible = false;
-
-            Console.Title = "2048";
-            Console.WindowWidth = 3 * 2 + 9 * n;
-            Console.WindowHeight = 3 + 1 + 3 * n;
-
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.SetCursorPosition(3, 1);
-            Console.WriteLine("Текущий счёт:");
-            
             while (true)
             {
-                Print(ref m, 3, 3);
+                Print(m, 3, 3);
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.SetCursorPosition(20 + 9 * (n - 3), 1);
@@ -74,7 +90,7 @@ namespace CSharpTest_Console_2048
                         Do_move(ref m);
                         break;
                     case ConsoleKey.R:
-                        Restart(ref m);
+                        Restart(m);
                         break;
                     default:
                         break;
@@ -83,9 +99,16 @@ namespace CSharpTest_Console_2048
                 if (c.Key == ConsoleKey.Escape)
                     break;
             }
+
+            Console.BackgroundColor = defaultBackgroundColor;
+            Console.ForegroundColor = defaultForegroundColor;
+            Console.Clear();
+            Console.CursorVisible = true;
+            Console.WindowWidth = defaultWidth;
+            Console.WindowHeight = defaultHeight;
         }
 
-        static void Restart(ref int[,] m)
+        private static void Restart(int[,] m)
         {
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
@@ -95,32 +118,25 @@ namespace CSharpTest_Console_2048
             score = 0;
         }
 
-        static void Print(ref int[,] m, int left, int top)
+        private static void Print(int[,] m, int left, int top)
         {
             for (int i = 0; i < n; i++)
-            {
                 for (int j = 0; j < n; j++)
                 {
                     SetColor(m[i, j]);
-                    for (int k = 0; k < 3; k++)
-                    {
-                        Console.SetCursorPosition(left + j * 9, top + i * 3 + k);
-                        Console.Write("         ");
-                    }
+                    Console.SetCursorPosition(left + j * 9, top + i * 3);
+                    Console.Write("         ");
                     Console.SetCursorPosition(left + j * 9, top + i * 3 + 1);
-                    if (m[i, j] < 10)
-                        Console.Write($"{m[i, j],5}");
-                    else if (m[i, j] < 100)
-                        Console.Write($"{m[i, j],5}");
-                    else if (m[i, j] < 1000)
-                        Console.Write($"{m[i, j],6}");
+                    if (m[i, j] < 100)
+                        Console.Write($"{m[i, j],5}    ");
                     else
-                        Console.Write($"{m[i, j],6}");
+                        Console.Write($"{m[i, j],6}   ");
+                    Console.SetCursorPosition(left + j * 9, top + i * 3 + 2);
+                    Console.Write("         ");
                 }
-            }
         }
 
-        static void SetColor(int x)
+        private static void SetColor(int x)
         {
             switch (x)
             {
@@ -179,121 +195,103 @@ namespace CSharpTest_Console_2048
             }
         }
 
-        static int delta = 0;
+        private static int deltaScore;
 
-        static void Do_move(ref int[,] m)
+        private static void Do_move(ref int[,] m)
         {
-            delta = 0;
-            if (Can_move(ref m))
+            deltaScore = 0;
+            if (Can_move_left(m))
             {
-                m = Move_left(ref m);
-                m = Merge_left(ref m);
-                m = Move_left(ref m);
+                Move_left(ref m);
+                Merge_left(ref m);
+                Move_left(ref m);
                 New_random_number(ref m);
-                score += delta / 2;
+                score += deltaScore / 2;
             }
         }
 
-        static bool Can_move(ref int[,] m)
+        private static bool Can_move_left(int[,] m)
         {
-            int[,] t = m;
-            t = Move_left(ref t);
-            t = Merge_left(ref t);
-            t = Move_left(ref t);
+            int[,] t = new int[n, n];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    t[i, j] = m[i, j];
+            
+            Move_left(ref t);
+            Merge_left(ref t);
+            //Move_left(ref t); // если Move_left и Merge_left ничего не сделали, то ещё один Move_left ничего не сделает
 
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
-                    if (!t[i, j].Equals(m[i, j]))
+                    if (t[i, j] != m[i, j])
                         return true;
 
             return false;
         }
 
-        static void New_random_number(ref int[,] m)
+        private static void New_random_number(ref int[,] m)
         {
-            int cnt = 0;
+            int EmptyTylesCount = 0;
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
                     if (m[i, j] == 0)
-                        cnt++;
+                        EmptyTylesCount++;
             
-            int t = rnd.Next(0, cnt) + 1;
-            cnt = 0;
+            int temp = rnd.Next(1, EmptyTylesCount + 1);
+
+            int CurrentEmptyTyle = 0;
             for (int i = 0; i < n; i++)
-            {
                 for (int j = 0; j < n; j++)
                 {
                     if (m[i, j] == 0)
-                        cnt++;
+                        CurrentEmptyTyle++;
 
-                    if (t == cnt)
+                    if (temp == CurrentEmptyTyle)
                     {
-                        if (rnd.Next(0, 10) == 0)
-                        {
+                        if (rnd.Next(0, 10) == 0) // 10% шанс выпадения 4, 90% шанс выпадения 2
                             m[i, j] = 4;
-                        }
                         else
-                        {
                             m[i, j] = 2;
-                        }
                         return;
                     }
                 }
-            }
         }
 
-        static int[,] Move_left(ref int[,] m)
+        private static void Move_left(ref int[,] m)
         {
             int[,] t = new int[n, n];
             int[] id = new int[n];
             for (int i = 0; i < n; i++)
-            {
                 for (int j = 0; j < n; j++)
-                {
                     if (m[i, j] != 0)
-                    {
-                        t[i, id[i]] = m[i, j];
-                        id[i]++;
-                    }
-                }
-            }
-            return t;
+                        t[i, id[i]++] = m[i, j];
+            m = t;
         }
 
-        static int[,] Merge_left(ref int[,] m)
+        private static void Merge_left(ref int[,] m)
         {
-            int[,] t = m;
             for (int i = 0; i < n; i++)
-            {
                 for (int j = 0; j + 1 < n; j++)
-                {
-                    if (t[i, j] == t[i, j + 1])
+                    if (m[i, j] != 0 && m[i, j] == m[i, j + 1])
                     {
-                        t[i, j] = t[i, j] + t[i, j];
-                        t[i, j + 1] = 0;
-                        delta += t[i, j];
+                        m[i, j] *= 2;
+                        m[i, j + 1] = 0;
+                        deltaScore += m[i, j];
                     }
-                }
-            }
-            return t;
         }
 
-        static void Reflect_vertically(ref int[,] m)
+        private static void Reflect_vertically(ref int[,] m)
         {
-            int[,] t = new int[n, n];
             for (int i = 0; i < n; i++)
-                for (int j = 0; j < n; j++)
-                    t[i, j] = m[i, n - 1 - j];
-            m = t;
+                for (int j = 0; j < n / 2; j++)
+                    (m[i, j], m[i, n - 1 - j]) = (m[i, n - 1 - j], m[i, j]);
         }
 
-        static void Transpose(ref int[,] m)
+        private static void Transpose(ref int[,] m)
         {
-            int[,] t = new int[n, n];
             for (int i = 0; i < n; i++)
-                for (int j = 0; j < n; j++)
-                    t[i, j] = m[j, i];
-            m = t;
+                for (int j = i + 1; j < n; j++)
+                    (m[i, j], m[j, i]) = (m[j, i], m[i, j]);
         }
     }
 }
