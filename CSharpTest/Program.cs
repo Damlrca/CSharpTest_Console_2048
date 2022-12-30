@@ -16,12 +16,30 @@ namespace CSharp_Console2048
         {
             if (args.Length == 1) // первый аргумент - размер поля
             {
-                // TODO
-                n = int.Parse(args[0]);
+                int temp;
+                if (int.TryParse(args[0], out temp))
+                {
+                    if (temp < 3 || temp > 10)
+                    {
+                        Console.WriteLine("Первый аргумент должен быть целым числом от 3 до 10");
+                        return;
+                    }
+                    else
+                    {
+                        n = temp;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Первый аргумент должен быть целым числом от 3 до 10");
+                    return;
+                }
+                
             }
             else if (args.Length > 1)
             {
-                // TODO
+                Console.WriteLine("Слишком много аргументов");
+                return;
             }
 
             var defaultWidth = Console.WindowWidth;
