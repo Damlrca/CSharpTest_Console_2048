@@ -77,9 +77,9 @@ namespace CSharp_Console2048
                 Console.SetCursorPosition(20 + 9 * (n - 3), 1);
                 Console.Write($"{score,10}");
 
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.SetCursorPosition(0, 0);
-                ConsoleKeyInfo c = Console.ReadKey();
+                //Console.ForegroundColor = ConsoleColor.Black;
+                //Console.SetCursorPosition(0, 0);
+                ConsoleKeyInfo c = Console.ReadKey(true);
 
                 switch(c.Key)
                 {
