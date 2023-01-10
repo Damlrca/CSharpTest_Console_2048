@@ -114,7 +114,7 @@ namespace CSharp_Console2048
                         break;
                 }
 
-                if (c.Key == ConsoleKey.Escape)
+                if (c.Key == ConsoleKey.Escape || c.Key == ConsoleKey.Q)
                     break;
             }
 
