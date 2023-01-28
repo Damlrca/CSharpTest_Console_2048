@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ConsoleSaverUtility;
 
 namespace CSharp_Console2048
 {
@@ -42,16 +39,12 @@ namespace CSharp_Console2048
                 return;
             }
 
-            var defaultWidth = Console.WindowWidth;
-            var defaultHeight = Console.WindowHeight;
+            ConsoleSaver.Save();
 
             Console.WindowWidth = 3 * 2 + 9 * n;
             Console.WindowHeight = 3 + 1 + 3 * n;
             Console.Title = "2048";
             Console.CursorVisible = false;
-
-            var defaultBackgroundColor = Console.BackgroundColor;
-            var defaultForegroundColor = Console.ForegroundColor;
 
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
@@ -118,12 +111,7 @@ namespace CSharp_Console2048
                     break;
             }
 
-            Console.BackgroundColor = defaultBackgroundColor;
-            Console.ForegroundColor = defaultForegroundColor;
-            Console.Clear();
-            Console.CursorVisible = true;
-            Console.WindowWidth = defaultWidth;
-            Console.WindowHeight = defaultHeight;
+            ConsoleSaver.Load();
         }
 
         private static void Restart(int[,] m)
